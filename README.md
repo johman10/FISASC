@@ -1,8 +1,6 @@
 # FISASC (Finnish Immigration Service Appointment System Checker)
 
-So I'm moving to Helsinki, and they have this tool to make an appointment, a requirement to get a Finnish number and become a resident of Finland. Now, my waiting time right now is 2 months, but everyone has the option to cancel their appointment whenever they want. So I figured to automate a check that let's me know (through Pushbullet) when there is a free spot earlier than my current appointment.
-
-The tool can be found here: https://migri.vihta.com/public/migri/#/reservation
+So I'm moving to Helsinki, and they have this tool to make an appointment with the immigration office (https://migri.vihta.com/public/migri/#/reservation), a requirement to get a Finnish number and become a resident of Finland. My waiting time right now is 2 months, but everyone has the option to cancel their appointment whenever they want. So I figured to automate a check that let's me know (through Pushbullet) when there is a free spot earlier than my current appointment.
 
 This tool does not make appointments. It only checks for new available times, you will still have to change your booking if you find a time that's good for you.
 
