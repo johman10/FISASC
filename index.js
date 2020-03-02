@@ -42,30 +42,30 @@ process.env.TZ = 'Europe/Helsinki';
   }).then((response) => response.json()));
   const responses = await Promise.all(promises);
 
-  const availableTimes = responses.flatMap((response) => (
+  const currentTimes = responses.flatMap((response) => (
     response.dailyTimesByOffice.flatMap((times) => (
       times.map((time) => new Date(time.startTimestamp))
     ))
   ));
 
-  const availableTimesBefore = availableTimes.filter((dateTime) => dateTime < maxDate);
-  if (!availableTimesBefore.length) return;
+  const relevantTimes = currentTimes.filter((dateTime) => dateTime < maxDate);
+  if (!relevantTimes.length) return;
 
-  const notifiedFile = fs.readFileSync(`${__dirname}/.notified`, { encoding: 'utf8' }).split('\n').filter(Boolean);
-  const nonNotifiedOptions = availableTimesBefore.filter((option) => !notifiedFile.includes(option.toISOString()));
+  const previousTimes = fs.readFileSync(`${__dirname}/.previous`, { encoding: 'utf8' }).split('\n').filter(Boolean);
+  const newOptions = relevantTimes.filter((t) => !previousTimes.includes(t.toISOString()));
 
-  if (!nonNotifiedOptions.length) return;
+  if (!newOptions.length) return;
 
   const title = '[FISASC] New appointment times available';
-  const message = nonNotifiedOptions.map((dateString) => {
+  const message = newOptions.map((dateString) => {
     const date = new Date(dateString);
 
-    return `${date.getFullYear()}-${date.getMonth()}-${date.getDate()} ${date.toLocaleTimeString()}`;
+    return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()} ${date.toLocaleTimeString()}`;
   }).join(' and ');
   const pusher = new PushBullet(PUSHBULLET_ACCESS_TOKEN);
 
   pusher.note(PUSHBULLET_DEVICE_ID, title, message);
 
-  const newNotifiedFile = [...notifiedFile, ...nonNotifiedOptions.map((option) => option.toISOString())];
-  fs.writeFileSync(`${__dirname}/.notified`, newNotifiedFile.join('\n'));
+  const newNotifiedFile = [...currentTimes.map((option) => option.toISOString())];
+  fs.writeFileSync(`${__dirname}/.previous`, newNotifiedFile.join('\n'));
 })();
